@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"errors"
-	"net/url"
-	"net/http"
+	"fmt"
 	"io/ioutil"
+	"net/http"
+	"net/url"
 	"strings"
 )
 
@@ -61,9 +61,9 @@ func decodeVideoInfo(response string) (streams streamList, err error) {
 	log("Server answered with a success code")
 
 	/*
-	for k, v := range answer {
-		log("%s: %#v", k, v)
-	}
+		for k, v := range answer {
+			log("%s: %#v", k, v)
+		}
 	*/
 
 	// read the streams map
@@ -86,13 +86,18 @@ func decodeVideoInfo(response string) (streams streamList, err error) {
 			log(fmt.Sprintf("An error occured while decoding one of the video's stream's information: stream %d: %s\n", stream_pos, err))
 			continue
 		}
+		var sig string
+		if _, exist := stream_qry["sig"]; exist {
+			sig = stream_qry["sig"][0]
+		}
+
 		stream := stream{
 			"quality": stream_qry["quality"][0],
-			"type": stream_qry["type"][0],
-			"url": stream_qry["url"][0],
-			"sig": stream_qry["sig"][0],
-			"title": answer["title"][0],
-			"author": answer["author"][0],
+			"type":    stream_qry["type"][0],
+			"url":     stream_qry["url"][0],
+			"sig":     sig,
+			"title":   answer["title"][0],
+			"author":  answer["author"][0],
 		}
 		streams = append(streams, stream)
 
